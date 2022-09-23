@@ -6,6 +6,9 @@ from utils import print_error
 
 from nav_msgs.msg import Odometry
 
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Twist
+
 from sensor_msgs.msg import LaserScan
 
 NUM_QUADRANTS = 4
@@ -14,7 +17,8 @@ class Controller:
     name: string = None
 
     # variables odometry
-    odom_data: Odometry = None
+    odom_position: Pose = None
+    odom_velocity: Twist = None
 
     # variables sensor
     base_scan_ranges = []
@@ -46,7 +50,10 @@ class Controller:
             pass
 
     def update_odom(self, data):
-        self.odom_data = data
+        self.odom_position = data.pose.pose
+        self.odom_velocity = data.twist.twist
+        print(self.odom_velocity)
+        print('--------------------------------')
 
     def update_base_scan(self, data):
         self.base_scan_ranges = data.ranges
