@@ -52,8 +52,6 @@ class Controller:
     def update_odom(self, data):
         self.odom_position = data.pose.pose
         self.odom_velocity = data.twist.twist
-        print(self.odom_velocity)
-        print('--------------------------------')
 
     def update_base_scan(self, data):
         self.base_scan_ranges = data.ranges
