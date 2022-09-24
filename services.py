@@ -10,6 +10,7 @@ def stageros_reset_world():
 def execute_service(service_name, type):
     rospy.wait_for_service(service_name)
     try:
-        rospy.ServiceProxy(service_name, type)
+        service = rospy.ServiceProxy(service_name, type)
+        service()
     except rospy.ServiceException as e:
         print("Service call failed: %s"%service_name)
