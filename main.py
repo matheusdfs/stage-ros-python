@@ -1,4 +1,3 @@
-from concurrent.futures.thread import _worker
 import rospy
 import numpy
 import random
