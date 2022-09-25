@@ -13,12 +13,14 @@ from geometry_msgs.msg import Twist
 
 from sensor_msgs.msg import LaserScan
 
-NUM_QUADRANTS = 4
-TIMEOUT = 10
+NUM_QUADRANTS = 5
+TIMEOUT = 80
 
-objective_position = [-31.13, 24.26]
+objective_position = [-45.13, 34.26]
 
 class Controller:
+    info = None
+
     name: string = None
     parameters = []
     score = -1
@@ -28,6 +30,9 @@ class Controller:
     odom_position: Pose = None
     odom_velocity: Twist = None
 
+    started_movings = False
+    last_odom_position: Pose = None
+
     # variables sensor
     sensor_updated = False
     base_scan_ranges = []
@@ -36,25 +41,29 @@ class Controller:
     quadrant_two_lve = 0
     quadrant_three_lve = 0
     quadrant_four_lve = 0
+    quadrant_five_lve = 0
 
-    def __init__(self, name = None, parameters = None):
+    def __init__(self, info):
         # for multiple instances of this node use the anonymous parameter true
         # rospy.init_node('controller')
 
         # initialize robot variables
-        if name == None:
+        if info['name'] == None:
             print_error('Name of robot is empty')
-        elif name == '':
-            self.name == name
+        elif info['name'] == '':
+            self.name == info['name']
         else:
-            self.name = '/' + name
+            self.name = '/' + info['name']
 
-        if len(parameters) == 0:
+        if len(info['parameters']) == 0:
             print_error('Parameters are empty')
         else:
-            self.parameters = parameters
+            self.parameters = info['parameters']
+
+        self.info = info
 
     def execute(self):
+        # declare subscribers
         rospy.Subscriber(self.name + '/odom', Odometry, callback=self.update_odom)
         rospy.Subscriber(self.name + '/base_scan', LaserScan, callback=self.update_base_scan)
 
@@ -64,16 +73,23 @@ class Controller:
         start_time = time.time()
 
         while not rospy.is_shutdown():
-            delta_x = self.odom_position.position.x - objective_position[0]
-            delta_y = self.odom_position.position.y - objective_position[1]
-            distance = math.sqrt(delta_x*delta_x + delta_y*delta_y)
+            distance = math.dist([self.odom_position.position.x, self.odom_position.position.y],
+                        [objective_position[0], objective_position[1]])
+
+            distance_last_position = math.dist([self.odom_position.position.x, self.odom_position.position.y],
+                        [self.last_odom_position.position.x, self.last_odom_position.position.y]) \
+                            if self.last_odom_position != None else 0.0
+
+            if distance_last_position > 0.0:
+                self.started_movings = True
 
             # TODO replace the position of the robot and of the objective_position by the distance
             result =    (self.parameters[0] * distance + \
                         self.parameters[1] * self.quadrant_one_lve + \
                         self.parameters[2] * self.quadrant_two_lve + \
                         self.parameters[3] * self.quadrant_three_lve + \
-                        self.parameters[4] * self.quadrant_four_lve) % 2
+                        self.parameters[4] * self.quadrant_four_lve + \
+                        self.parameters[5] * self.quadrant_five_lve) % 2
 
             pub = rospy.Publisher(self.name + '/cmd_vel', Twist, queue_size=10)
 
@@ -85,10 +101,10 @@ class Controller:
 
             delta_time = time.time() - start_time
 
-            if delta_time > TIMEOUT:
+            if (self.started_movings and distance_last_position == 0.0) or delta_time > 50:
 
-                if delta_time > 10:
-                    delta_time = 10
+                if delta_time > 50:
+                    delta_time = 50
 
                 self.score = -0.1 * delta_time * delta_time + 10 - distance + 5
                 if distance < 0.1:
@@ -97,9 +113,10 @@ class Controller:
                     print_warning('timeout ' + str(self.score))
                 break
         
-        return self.score
+        self.info['score'] = self.score
 
     def update_odom(self, data):
+        self.last_odom_position = self.odom_position
         self.odom_position = data.pose.pose
         self.odom_velocity = data.twist.twist
         self.odom_updated = True
@@ -111,4 +128,5 @@ class Controller:
         self.quadrant_two_lve = min(self.base_scan_ranges   [quad_len : 2*quad_len])
         self.quadrant_three_lve = min(self.base_scan_ranges [2*quad_len : 3*quad_len])
         self.quadrant_four_lve = min(self.base_scan_ranges  [3*quad_len : 4*quad_len])
+        self.quadrant_five_lve = min(self.base_scan_ranges  [4*quad_len : 5*quad_len])
         self.sensor_updated = True
