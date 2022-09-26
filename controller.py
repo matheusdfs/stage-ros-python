@@ -72,6 +72,8 @@ class Controller:
 
         start_time = time.time()
 
+        rate = rospy.Rate(100)
+
         while not rospy.is_shutdown():
             distance = math.dist([self.odom_position.position.x, self.odom_position.position.y],
                         [objective_position[0], objective_position[1]])
@@ -112,6 +114,8 @@ class Controller:
                 else:
                     print_warning('timeout ' + str(self.score))
                 break
+
+            rate.sleep()
         
         self.info['score'] = self.score
 

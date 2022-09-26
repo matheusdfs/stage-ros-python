@@ -6,7 +6,7 @@ import threading
 from controller import Controller
 from services import stageros_reset_world
 
-NUM_GENES = 4
+NUM_GENES = 6
 NUM_INPUTS = 6
 
 def initialize_random_array():
@@ -49,8 +49,9 @@ if __name__ == '__main__':
                 x = threading.Thread(target=control.execute)
                 x.start()
                 workers.append(x)
-                # control = Controller('robot_' + str(i), parameters_array[i])
-                # score_array[i] = control.execute()
+                
+                # control = Controller(robots_info[i])
+                # control.execute()
 
             for w in workers:
                 w.join()
