@@ -14,9 +14,9 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 
 NUM_QUADRANTS = 5
-TIMEOUT = 80
+TIMEOUT = 10
 
-objective_position = [-45.13, 34.26]
+objective_position = [0.0, 0.0]
 
 class Controller:
     info = None
@@ -30,7 +30,6 @@ class Controller:
     odom_position: Pose = None
     odom_velocity: Twist = None
 
-    started_movings = False
     last_odom_position: Pose = None
 
     # variables sensor
@@ -44,9 +43,6 @@ class Controller:
     quadrant_five_lve = 0
 
     def __init__(self, info):
-        # for multiple instances of this node use the anonymous parameter true
-        # rospy.init_node('controller')
-
         # initialize robot variables
         if info['name'] == None:
             print_error('Name of robot is empty')
@@ -63,54 +59,42 @@ class Controller:
         self.info = info
 
     def execute(self):
-        # declare subscribers
-        rospy.Subscriber(self.name + '/odom', Odometry, callback=self.update_odom)
-        rospy.Subscriber(self.name + '/base_scan', LaserScan, callback=self.update_base_scan)
-
-        while not(self.odom_updated and self.sensor_updated):
-            pass
+        self.prepare_execute()
 
         start_time = time.time()
 
         rate = rospy.Rate(100)
 
+        started_movings = False
+
         while not rospy.is_shutdown():
-            distance = math.dist([self.odom_position.position.x, self.odom_position.position.y],
+            distance_from_objective = math.dist([self.odom_position.position.x, self.odom_position.position.y],
                         [objective_position[0], objective_position[1]])
 
-            distance_last_position = math.dist([self.odom_position.position.x, self.odom_position.position.y],
+            delta_position = math.dist([self.odom_position.position.x, self.odom_position.position.y],
                         [self.last_odom_position.position.x, self.last_odom_position.position.y]) \
                             if self.last_odom_position != None else 0.0
 
-            if distance_last_position > 0.0:
-                self.started_movings = True
-
-            # TODO replace the position of the robot and of the objective_position by the distance
-            result =    (self.parameters[0] * distance + \
-                        self.parameters[1] * self.quadrant_one_lve + \
-                        self.parameters[2] * self.quadrant_two_lve + \
-                        self.parameters[3] * self.quadrant_three_lve + \
-                        self.parameters[4] * self.quadrant_four_lve + \
-                        self.parameters[5] * self.quadrant_five_lve) % 2
+            if delta_position > 0.0:
+                started_movings = True
 
             pub = rospy.Publisher(self.name + '/cmd_vel', Twist, queue_size=10)
 
             msg = Twist()
             msg.linear.x = 1
-            msg.angular.z = result - 1
+            msg.angular.z = self.predict_function(distance_from_objective) - 1
 
             pub.publish(msg)
 
             delta_time = time.time() - start_time
 
-            if (self.started_movings and distance_last_position == 0.0) or delta_time > 50:
+            if (started_movings and delta_position == 0.0) or delta_time > 50:
 
-                if delta_time > 50:
-                    delta_time = 50
+                self.score = self.fitness_function(delta_time, distance_from_objective)
 
-                self.score = -0.1 * delta_time * delta_time + 10 - distance + 5
-                if distance < 0.1:
+                if distance_from_objective < 0.1:
                     print_ok('BOAAAAAAA FILHAO ' + str(self.score))
+                    break
                 else:
                     print_warning('timeout ' + str(self.score))
                 break
@@ -118,6 +102,25 @@ class Controller:
             rate.sleep()
         
         self.info['score'] = self.score
+
+    def prepare_execute(self):
+        # declare subscribers
+        rospy.Subscriber(self.name + '/odom', Odometry, callback=self.update_odom)
+        rospy.Subscriber(self.name + '/base_scan', LaserScan, callback=self.update_base_scan)
+
+        while not(self.odom_updated and self.sensor_updated):
+            pass
+
+    def predict_function(self, distance_from_objective):
+        return (self.parameters[0] * distance_from_objective + \
+                self.parameters[1] * self.quadrant_one_lve + \
+                self.parameters[2] * self.quadrant_two_lve + \
+                self.parameters[3] * self.quadrant_three_lve + \
+                self.parameters[4] * self.quadrant_four_lve + \
+                self.parameters[5] * self.quadrant_five_lve) % 2
+
+    def fitness_function(self, delta_time, distance_from_objective):
+        return -0.1 * delta_time + 10 - distance_from_objective + 5
 
     def update_odom(self, data):
         self.last_odom_position = self.odom_position

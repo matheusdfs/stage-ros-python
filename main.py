@@ -12,14 +12,6 @@ NUM_INPUTS = 6
 def initialize_random_array():
     return numpy.random.random(NUM_INPUTS)
 
-def get_position_best_score(score_array):
-    pos_bs = 0
-    for i in range(NUM_GENES):
-        if score_array[i]['score'] > score_array[pos_bs]['score']:
-            pos_bs = i
-
-    return pos_bs
-
 if __name__ == '__main__':
     # TODO: try to use the ros functionality to increase the performance of the program
 
@@ -56,8 +48,9 @@ if __name__ == '__main__':
             for w in workers:
                 w.join()
 
-            bs = get_position_best_score(robots_info)
-            print('best parent in this generation is: ' + str(bs))
+            # robots_info.sort(key=lambda x: x[0]['score'], reverse=False)
+            # print(robots_info)
+            # print('best parent in this generation is: ' + str(bs))
 
             #select
             robots_info[0] = robots_info[bs]
