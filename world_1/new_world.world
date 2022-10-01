@@ -6,6 +6,7 @@ speedup 1
 
 define sicklaser ranger
 (
+  obstacle_return 0
   sensor(
     pose [ 0 0 0.1 0 ]
     fov 360
@@ -14,6 +15,7 @@ define sicklaser ranger
   )
   color "random"
   block( 
+    obstacle_return 0
     points 4
     point[0] [0 0]
     point[1] [0 1]
@@ -35,7 +37,7 @@ define floorplan model
   gripper_return 0
   fiducial_return 0
   ranger_return 0
-  obstacle_return 1
+  obstacle_return 0
 )
 
 floorplan
@@ -90,7 +92,7 @@ define agent position
 
   color "random"
   drive "omni"		 	# Differential steering model.
-  obstacle_return 1           	# Can hit things.
+  obstacle_return 0           	# Can hit things.
   ranger_return 7           	# reflects sonar beams
   blob_return 1               	# Seen by blobfinders  
   fiducial_return 1           	# Seen as "1" fiducial finders
@@ -105,7 +107,13 @@ define agent position
 
 define block model
 (
-  size [0.500 0.500 1.500]
+  size [0.100 0.100 0.100]
+  gui_nose 0
+)
+
+define destiny model
+(
+  size [0.500 0.500 0.100]
   gui_nose 0
 )
 
@@ -116,4 +124,4 @@ agent( pose [ 0.0 -12.0 0.00 -270.0])
 agent( pose [ -10.392 -6.0 0.00 -330.0])
 agent( pose [ -10.392 6.0 0.00 -390.0])
 
-block( pose [ 0.000 0.000 0.000 0.000 ] color "green")
+destiny( pose [ 0.000 0.000 0.000 0.000 ] color "green")

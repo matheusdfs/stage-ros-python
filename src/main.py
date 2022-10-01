@@ -27,9 +27,7 @@ def execute_robots(robots_info):
         w.join()
 
 if __name__ == '__main__':
-    #TODO: implement PSO
     #TODO: take the score off the controller
-    #TODO: add the direction vector as a parameter in the predict_function (review all the parameters in the predict_function)
     #TODO: get the actual position of the red block in the world and put as objective
 
     robots_info = []
