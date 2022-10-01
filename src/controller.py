@@ -1,5 +1,7 @@
 import time
 import math
+
+import numpy
 import rospy
 import string
 
@@ -112,15 +114,14 @@ class Controller:
             pass
 
     def predict_function(self, distance_from_objective):
+        vector_direction = numpy.subtract([objective_position[0], objective_position[1]], [self.odom_position.position.x, self.odom_position.position.y])
         return (self.parameters[0] * distance_from_objective + \
-                self.parameters[1] * self.quadrant_one_lve + \
-                self.parameters[2] * self.quadrant_two_lve + \
-                self.parameters[3] * self.quadrant_three_lve + \
-                self.parameters[4] * self.quadrant_four_lve + \
-                self.parameters[5] * self.quadrant_five_lve) % 2
+                self.parameters[1] * vector_direction[0] + \
+                self.parameters[1] * vector_direction[1] + \
+                self.parameters[2] * self.quadrant_three_lve) % 2
 
     def fitness_function(self, delta_time, distance_from_objective):
-        return -0.1 * delta_time + 10 - distance_from_objective + 5
+        return -0.1 * delta_time + 10 - distance_from_objective + 50
 
     def update_odom(self, data):
         self.last_odom_position = self.odom_position
