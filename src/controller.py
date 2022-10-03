@@ -16,7 +16,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 
 NUM_QUADRANTS = 5
-TIMEOUT = 10
+TIMEOUT = 1000
 
 objective_position = [0.0, 0.0]
 
@@ -65,7 +65,7 @@ class Controller:
 
         start_time = time.time()
 
-        rate = rospy.Rate(100)
+        rate = rospy.Rate(1)
 
         started_movings = False
 
@@ -90,7 +90,8 @@ class Controller:
 
             delta_time = time.time() - start_time
 
-            if (started_movings and delta_position == 0.0) or delta_time > 50:
+            # (started_movings and delta_position == 0.0)
+            if delta_time > 10:
 
                 self.score = self.fitness_function(delta_time, distance_from_objective)
 

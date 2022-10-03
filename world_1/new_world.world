@@ -47,7 +47,7 @@ floorplan
   obstacle_return 1
   #size [60.000 60.000 0.800]
   #size [80.5 80.5 0.5]
-  size [32.2 32.2 6.0]
+  size [32.2 32.2 60.0]
   #size [16.1 16.1 0.5]
   #size [8.05 8.05 0]
   pose [0.000 0.000 0.000 0.000]
@@ -67,11 +67,11 @@ window
 
 
 # GUI options
-  show_data 1
+  show_data 0
   show_flags 1
   show_blocks 1
   show_clock 1
-  show_footprints 1
+  show_footprints 0
   show_grid 1
   show_trailarrows 0
   show_trailrise 0
@@ -118,11 +118,56 @@ define destiny model
   gui_nose 0
 )
 
-agent( pose [ 0.0 -12.0 0.00 -270.0])
-agent( pose [ 0.0 -12.0 1.00 -270.0])
-agent( pose [ 0.0 -12.0 2.00 -270.0])
-agent( pose [ 0.0 -12.0 3.00 -270.0])
-agent( pose [ 0.0 -12.0 4.00 -270.0])
-agent( pose [ 0.0 -12.0 5.00 -270.0])
+agent( pose [ 0.0 -12.0 1.00  -270.0])
+agent( pose [ 0.0 -12.0 2.00  -270.0])
+agent( pose [ 0.0 -12.0 3.00  -270.0])
+agent( pose [ 0.0 -12.0 4.00  -270.0])
+agent( pose [ 0.0 -12.0 5.00  -270.0])
+agent( pose [ 0.0 -12.0 6.00  -270.0])
+agent( pose [ 0.0 -12.0 7.00  -270.0])
+agent( pose [ 0.0 -12.0 8.00  -270.0])
+agent( pose [ 0.0 -12.0 9.00  -270.0])
+agent( pose [ 0.0 -12.0 10.00  -270.0])
+agent( pose [ 0.0 -12.0 11.00  -270.0])
+agent( pose [ 0.0 -12.0 12.00  -270.0])
+agent( pose [ 0.0 -12.0 13.00  -270.0])
+agent( pose [ 0.0 -12.0 14.00  -270.0])
+agent( pose [ 0.0 -12.0 15.00  -270.0])
+agent( pose [ 0.0 -12.0 16.00  -270.0])
+agent( pose [ 0.0 -12.0 17.00  -270.0])
+agent( pose [ 0.0 -12.0 18.00  -270.0])
+agent( pose [ 0.0 -12.0 19.00  -270.0])
+agent( pose [ 0.0 -12.0 20.00  -270.0])
+agent( pose [ 0.0 -12.0 21.00  -270.0])
+agent( pose [ 0.0 -12.0 22.00  -270.0])
+agent( pose [ 0.0 -12.0 23.00  -270.0])
+agent( pose [ 0.0 -12.0 24.00  -270.0])
+agent( pose [ 0.0 -12.0 25.00  -270.0])
+agent( pose [ 0.0 -12.0 26.00  -270.0])
+agent( pose [ 0.0 -12.0 27.00  -270.0])
+agent( pose [ 0.0 -12.0 28.00  -270.0])
+agent( pose [ 0.0 -12.0 29.00  -270.0])
+agent( pose [ 0.0 -12.0 30.00  -270.0])
+agent( pose [ 0.0 -12.0 31.00  -270.0])
+agent( pose [ 0.0 -12.0 32.00  -270.0])
+agent( pose [ 0.0 -12.0 33.00  -270.0])
+agent( pose [ 0.0 -12.0 34.00  -270.0])
+agent( pose [ 0.0 -12.0 35.00  -270.0])
+agent( pose [ 0.0 -12.0 36.00  -270.0])
+agent( pose [ 0.0 -12.0 37.00  -270.0])
+agent( pose [ 0.0 -12.0 38.00  -270.0])
+agent( pose [ 0.0 -12.0 39.00  -270.0])
+agent( pose [ 0.0 -12.0 40.00  -270.0])
+agent( pose [ 0.0 -12.0 41.00  -270.0])
+agent( pose [ 0.0 -12.0 42.00  -270.0])
+agent( pose [ 0.0 -12.0 43.00  -270.0])
+agent( pose [ 0.0 -12.0 44.00  -270.0])
+agent( pose [ 0.0 -12.0 45.00  -270.0])
+agent( pose [ 0.0 -12.0 46.00  -270.0])
+agent( pose [ 0.0 -12.0 47.00  -270.0])
+agent( pose [ 0.0 -12.0 48.00  -270.0])
+agent( pose [ 0.0 -12.0 49.00  -270.0])
+agent( pose [ 0.0 -12.0 50.00  -270.0])
+
 
 destiny( pose [ 0.000 0.000 0.000 0.000 ] color "green")

@@ -11,7 +11,7 @@ import pyswarms.backend as P
 
 from pyswarms.backend.topology import Star
 
-NUM_SWARMS = 6
+NUM_SWARMS = 20
 NUM_PARAMETERS = 3
 
 def execute_robots(robots_info):
